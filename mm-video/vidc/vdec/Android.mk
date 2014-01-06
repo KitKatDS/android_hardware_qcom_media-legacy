@@ -55,34 +55,20 @@ libmm-vdec-inc          := bionic/libc/include
 libmm-vdec-inc          += bionic/libstdc++/include
 libmm-vdec-inc          += $(LOCAL_PATH)/inc
 libmm-vdec-inc          += $(OMX_VIDEO_PATH)/vidc/common/inc
-libmm-vdec-inc          += hardware/qcom/media/mm-core/inc
+libmm-vdec-inc          += hardware/qcom/media-legacy/mm-core/inc
 #DRM include - Interface which loads the DRM library
 libmm-vdec-inc	        += $(OMX_VIDEO_PATH)/DivxDrmDecrypt/inc
 
-ifneq ($(filter msm8974 msm8x74,$(TARGET_BOARD_PLATFORM)),)
-libmm-vdec-inc          += hardware/qcom/display/msm8974/libgralloc
-else
-libmm-vdec-inc          += hardware/qcom/display/msm8960/libgralloc
-endif
+libmm-vdec-inc          += hardware/qcom/display-legacy/libgralloc
 
 libmm-vdec-inc          += frameworks/native/include/media/openmax
 libmm-vdec-inc          += frameworks/native/include/media/hardware
-libmm-vdec-inc          += hardware/qcom/media/libc2dcolorconvert
+libmm-vdec-inc          += hardware/qcom/media-legacy/libc2dcolorconvert
 
-ifneq ($(filter msm8974 msm8x74,$(TARGET_BOARD_PLATFORM)),)
-libmm-vdec-inc          += hardware/qcom/display/msm8974/libcopybit
-else
-libmm-vdec-inc          += hardware/qcom/display/msm8960/libcopybit
-endif
+libmm-vdec-inc          += hardware/qcom/display-legacy/libcopybit
 libmm-vdec-inc          += frameworks/av/include/media/stagefright
-
-ifneq ($(filter msm8974 msm8x74,$(TARGET_BOARD_PLATFORM)),)
-libmm-vdec-inc          += hardware/qcom/display/msm8974/libqservice
-libmm-vdec-inc          += hardware/qcom/display/msm8974/libqdutils
-else
-libmm-vdec-inc          += hardware/qcom/display/msm8960/libqservice
-libmm-vdec-inc          += hardware/qcom/display/msm8960/libqdutils
-endif
+libmm-vdec-inc          += hardware/qcom/display-legacy/libqservice
+libmm-vdec-inc          += hardware/qcom/display-legacy/libqdutils
 
 
 LOCAL_MODULE                    := libOmxVdec
@@ -112,7 +98,7 @@ include $(BUILD_SHARED_LIBRARY)
 # ---------------------------------------------------------------------------------
 include $(CLEAR_VARS)
 
-mm-vdec-test-inc    := hardware/qcom/media/mm-core/inc
+mm-vdec-test-inc    := hardware/qcom/media-legacy/mm-core/inc
 mm-vdec-test-inc    += $(LOCAL_PATH)/inc
 
 LOCAL_MODULE                    := mm-vdec-omx-test
@@ -133,7 +119,7 @@ include $(BUILD_EXECUTABLE)
 # ---------------------------------------------------------------------------------
 include $(CLEAR_VARS)
 
-mm-vdec-drv-test-inc    := hardware/qcom/media/mm-core/inc
+mm-vdec-drv-test-inc    := hardware/qcom/media-legacy/mm-core/inc
 mm-vdec-drv-test-inc    += $(LOCAL_PATH)/inc
 
 LOCAL_MODULE                    := mm-video-driver-test
