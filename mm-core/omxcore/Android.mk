@@ -1,35 +1,40 @@
-ifneq ($(BUILD_TINY_ANDROID),true)
+#--------------------------------------------------------------------------
+#Copyright (c) 2009, The Linux Foundataion. All rights reserved.
 
+#Redistribution and use in source and binary forms, with or without
+#modification, are permitted provided that the following conditions are met:
+#    * Redistributions of source code must retain the above copyright
+#      notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright
+#      notice, this list of conditions and the following disclaimer in the
+#      documentation and/or other materials provided with the distribution.
+#    * Neither the name of The Linux Foundation nor
+#      the names of its contributors may be used to endorse or promote
+#      products derived from this software without specific prior written
+#      permission.
+
+#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+#AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+#IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#NON-INFRINGEMENT ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+#CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+#EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#--------------------------------------------------------------------------
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
-OMXCORE_CFLAGS := -g -O3 -DVERBOSE
-OMXCORE_CFLAGS += -O0 -fno-inline -fno-short-enums
 OMXCORE_CFLAGS += -D_ANDROID_
-OMXCORE_CFLAGS += -U_ENABLE_QC_MSG_LOG_
+OMXCORE_CFLAGS += -D_ENABLE_QC_MSG_LOG_
 
-#===============================================================================
-#             Figure out the targets
-#===============================================================================
-
-ifeq ($(TARGET_BOARD_PLATFORM),msm7627a)
-MM_CORE_TARGET = 7627A
-else ifeq ($(TARGET_BOARD_PLATFORM),msm7630_surf)
-MM_CORE_TARGET = 7630
-else ifeq ($(TARGET_BOARD_PLATFORM),msm8660)
-MM_CORE_TARGET = 8660
-#Comment out following line to disable drm.play component
-OMXCORE_CFLAGS += -DENABLE_DRMPLAY
-else ifeq ($(TARGET_BOARD_PLATFORM),msm8960)
-MM_CORE_TARGET = 8960
-else ifeq ($(TARGET_BOARD_PLATFORM),msm8974)
-MM_CORE_TARGET = 8974
-else ifeq ($(TARGET_BOARD_PLATFORM),msm8610)
-MM_CORE_TARGET = 8610
-else ifeq ($(TARGET_BOARD_PLATFORM),msm8226)
-MM_CORE_TARGET = 8226
+ifeq ($(TARGET_BOARD_PLATFORM),msm7x30)
+    MM_CORE_TARGET = 7630
 else
-MM_CORE_TARGET = default
+    $(error Unsupported target platform $(TARGET_BOARD_PLATFORM))
 endif
 
 #===============================================================================
@@ -53,17 +58,6 @@ LOCAL_COPY_HEADERS      += inc/qc_omx_component.h
 LOCAL_COPY_HEADERS      += inc/qc_omx_msg.h
 LOCAL_COPY_HEADERS      += inc/QOMX_AudioExtensions.h
 LOCAL_COPY_HEADERS      += inc/QOMX_AudioIndexExtensions.h
-LOCAL_COPY_HEADERS      += inc/OMX_CoreExt.h
-LOCAL_COPY_HEADERS      += inc/QOMX_CoreExtensions.h
-LOCAL_COPY_HEADERS      += inc/QOMX_FileFormatExtensions.h
-LOCAL_COPY_HEADERS      += inc/QOMX_IVCommonExtensions.h
-LOCAL_COPY_HEADERS      += inc/QOMX_SourceExtensions.h
-LOCAL_COPY_HEADERS      += inc/QOMX_VideoExtensions.h
-LOCAL_COPY_HEADERS      += inc/OMX_IndexExt.h
-LOCAL_COPY_HEADERS      += inc/OMX_VideoExt.h
-LOCAL_COPY_HEADERS      += inc/QOMX_StreamingExtensions.h
-LOCAL_COPY_HEADERS      += inc/QCMediaDefs.h
-LOCAL_COPY_HEADERS      += inc/QCMetaData.h
 
 #===============================================================================
 #             LIBRARY for Android apps
@@ -71,9 +65,7 @@ LOCAL_COPY_HEADERS      += inc/QCMetaData.h
 
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/src/common
 LOCAL_C_INCLUDES        += $(LOCAL_PATH)/inc
-LOCAL_PRELINK_MODULE    := false
 LOCAL_MODULE            := libOmxCore
-LOCAL_MODULE_TAGS       := optional
 LOCAL_SHARED_LIBRARIES  := liblog libdl
 LOCAL_CFLAGS            := $(OMXCORE_CFLAGS)
 
@@ -91,9 +83,7 @@ include $(CLEAR_VARS)
 
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/src/common
 LOCAL_C_INCLUDES        += $(LOCAL_PATH)/inc
-LOCAL_PRELINK_MODULE    := false
 LOCAL_MODULE            := libmm-omxcore
-LOCAL_MODULE_TAGS       := optional
 LOCAL_SHARED_LIBRARIES  := liblog libdl
 LOCAL_CFLAGS            := $(OMXCORE_CFLAGS)
 
@@ -102,5 +92,3 @@ LOCAL_SRC_FILES         += src/common/qc_omx_core.c
 LOCAL_SRC_FILES         += src/$(MM_CORE_TARGET)/qc_registry_table.c
 
 include $(BUILD_SHARED_LIBRARY)
-
-endif #BUILD_TINY_ANDROID

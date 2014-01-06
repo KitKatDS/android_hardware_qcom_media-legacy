@@ -29,44 +29,37 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             O p e n M A X   w r a p p e r s
                              O p e n  M A X   C o r e
 
- This module contains the definitions of the OpenMAX core.
+*//** @file qc_omx_common.h
+  This module contains the definitions of the OpenMAX core.
 
 *//*========================================================================*/
 
-#ifndef QC_OMX_CORE_H
-#define QC_OMX_CORE_H
-
-#include "qc_omx_common.h"        // OMX API
-#include <string.h>
-
-#define OMX_COMP_MAX_INST 4
-
-typedef struct _omx_core_cb_type
-{
-  char*                         name;// Component name
-  create_qc_omx_component     fn_ptr;// create instance fn ptr
-  void*                         inst[OMX_COMP_MAX_INST];// Instance handle
-  void*                so_lib_handle;// So Library handle
-  char*                  so_lib_name;// so directory
-  char* roles[OMX_CORE_MAX_CMP_ROLES];// roles played
-}omx_core_cb_type;
-
-typedef struct
-{
-    OMX_U32 width;
-    OMX_U32 height;
-    OMX_U32 profile;
-    OMX_U32 level;
-} VideoOMXConfigParserOutputs;
+#ifndef QC_OMX_COMMON_H
+#define QC_OMX_COMMON_H
 
 
-typedef struct
-{
-    OMX_U8* inPtr;             //pointer to codec configuration header
-    OMX_U32 inBytes;           //length of codec configuration header
-    OMX_STRING cComponentRole; //OMX component codec type
-    OMX_STRING cComponentName;  //OMX component name
-} OMXConfigParserInputs;
+#include <stdio.h>           // Standard IO
+#include "OMX_Core.h"        // OMX API
+#include "OMX_QCOMExtns.h"   // OMX API
+
+#define OMX_CORE_MAX_CMP                1 // MAX Components supported
+#define OMX_CORE_MAX_CMP_ROLES          1 // MAX Roles per component
+#define OMX_SPEC_VERSION       0x00000101 // OMX Version
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef void * (*create_qc_omx_component)(void);
+
+#ifdef _ANDROID_
+#define LOG_TAG "QC_CORE"
+#endif
+#include "qc_omx_msg.h"
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

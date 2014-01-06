@@ -43,14 +43,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
-#include <pthread.h>
 
 #include "qc_omx_core.h"
 #include "omx_core_cmp.h"
 
+#define DEBUG_PRINT_ERROR printf
+#define DEBUG_PRINT       printf
+#define DEBUG_DETAIL      printf
+
 extern omx_core_cb_type core[];
 extern const unsigned int SIZE_OF_CORE;
-static pthread_mutex_t lock_core = PTHREAD_MUTEX_INITIALIZER;
+
 
 /* ======================================================================
 FUNCTION
@@ -202,7 +205,6 @@ static int is_cmp_handle_exists(OMX_HANDLETYPE inst)
   if(NULL == inst)
      return rc;
 
-  pthread_mutex_lock(&lock_core);
   for(i=0; i< SIZE_OF_CORE; i++)
   {
     for(j=0; j< OMX_COMP_MAX_INST; j++)
@@ -210,12 +212,10 @@ static int is_cmp_handle_exists(OMX_HANDLETYPE inst)
       if(inst == core[i].inst[j])
       {
         rc = i;
-        goto finish;
+        return rc;
       }
     }
   }
-finish:
-  pthread_mutex_unlock(&lock_core);
   return rc;
 }
 
@@ -374,6 +374,27 @@ RETURN VALUE
 OMX_API OMX_ERRORTYPE OMX_APIENTRY
 OMX_Deinit()
 {
+  int err;
+  unsigned i=0,j=0;
+  OMX_ERRORTYPE eRet;
+
+  /* Free the dangling handles here if any */
+  for(i=0; i< SIZE_OF_CORE; i++)
+  {
+    for(j=0; j< OMX_COMP_MAX_INST; j++)
+    {
+      if(core[i].inst[j])
+      {
+        DEBUG_PRINT("OMX DeInit: Freeing handle for %s\n",
+                     core[i].name);
+
+        /* Release the component and unload dynmaic library */
+        eRet = OMX_FreeHandle(core[i].inst[j]);
+        if(eRet != OMX_ErrorNone)
+          return eRet;
+      }
+    }
+  }
   return OMX_ErrorNone;
 }
 
@@ -404,12 +425,13 @@ OMX_GetHandle(OMX_OUT OMX_HANDLETYPE*     handle,
   DEBUG_PRINT("OMXCORE API :  Get Handle %x %s %x\n",(unsigned) handle,
                                                      componentName,
                                                      (unsigned) appData);
-  pthread_mutex_lock(&lock_core);
   if(handle)
   {
     struct stat sd;
 
     *handle = NULL;
+    if(stat("/dev/pmem_adsp",&sd) != 0)
+        return OMX_ErrorInsufficientResources;
 
     cmp_index = get_cmp_index(componentName);
 
@@ -435,7 +457,6 @@ OMX_GetHandle(OMX_OUT OMX_HANDLETYPE*     handle,
                            OMX_ErrorNone)
           {
               DEBUG_PRINT("Component not created succesfully\n");
-              pthread_mutex_unlock(&lock_core);
               return eRet;
 
           }
@@ -448,7 +469,6 @@ OMX_GetHandle(OMX_OUT OMX_HANDLETYPE*     handle,
           else
           {
             DEBUG_PRINT("OMX_GetHandle:NO free slot available to store Component Handle\n");
-            pthread_mutex_unlock(&lock_core);
             return OMX_ErrorInsufficientResources;
           }
           DEBUG_PRINT("Component %x Successfully created\n",(unsigned)*handle);
@@ -477,7 +497,6 @@ OMX_GetHandle(OMX_OUT OMX_HANDLETYPE*     handle,
     eRet =  OMX_ErrorBadParameter;
     DEBUG_PRINT("\n OMX_GetHandle: NULL handle \n");
   }
-  pthread_mutex_unlock(&lock_core);
   return eRet;
 }
 /* ======================================================================
@@ -506,9 +525,8 @@ OMX_FreeHandle(OMX_IN OMX_HANDLETYPE hComp)
     // 1. Delete the component
     if ((eRet = qc_omx_component_deinit(hComp)) == OMX_ErrorNone)
     {
-        pthread_mutex_lock(&lock_core);
         /* Unload component library */
-    if( (i < SIZE_OF_CORE) && core[i].so_lib_handle)
+    if( ((unsigned int)i < SIZE_OF_CORE) && core[i].so_lib_handle)
     {
            if(check_lib_unload(i))
            {
@@ -524,7 +542,6 @@ OMX_FreeHandle(OMX_IN OMX_HANDLETYPE hComp)
            }
     }
     clear_cmp_handle(hComp);
-    pthread_mutex_unlock(&lock_core);
     }
     else
     {

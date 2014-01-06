@@ -29,44 +29,49 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             O p e n M A X   w r a p p e r s
                              O p e n  M A X   C o r e
 
- This module contains the definitions of the OpenMAX core.
+*//** @file QOMX_AudioIndexExtensions.h
+  This module contains the index extensions for Audio
 
 *//*========================================================================*/
 
-#ifndef QC_OMX_CORE_H
-#define QC_OMX_CORE_H
 
-#include "qc_omx_common.h"        // OMX API
-#include <string.h>
+#ifndef __H_QOMX_AUDIOINDEXEXTENSIONS_H__
+#define __H_QOMX_AUDIOINDEXEXTENSIONS_H__
 
-#define OMX_COMP_MAX_INST 4
+/*========================================================================
 
-typedef struct _omx_core_cb_type
+                     INCLUDE FILES FOR MODULE
+
+========================================================================== */
+#include <OMX_Core.h>
+
+/*========================================================================
+
+                      DEFINITIONS AND DECLARATIONS
+
+========================================================================== */
+
+#if defined( __cplusplus )
+extern "C"
 {
-  char*                         name;// Component name
-  create_qc_omx_component     fn_ptr;// create instance fn ptr
-  void*                         inst[OMX_COMP_MAX_INST];// Instance handle
-  void*                so_lib_handle;// So Library handle
-  char*                  so_lib_name;// so directory
-  char* roles[OMX_CORE_MAX_CMP_ROLES];// roles played
-}omx_core_cb_type;
+#endif /* end of macro __cplusplus */
 
-typedef struct
+/**
+ * Enumeration used to define Qualcomm's vendor extensions for
+ * audio. The audio extensions occupy a range of
+ * 0x7F100000-0x7F1FFFFF, inclusive.
+ */
+typedef enum QOMX_AUDIO_EXTENSIONS_INDEXTYPE
 {
-    OMX_U32 width;
-    OMX_U32 height;
-    OMX_U32 profile;
-    OMX_U32 level;
-} VideoOMXConfigParserOutputs;
+    QOMX_IndexParamAudioAmrWbPlus       = 0x7F200000, /**< "OMX.Qualcomm.index.audio.amrwbplus" */
+    QOMX_IndexParamAudioWma10Pro        = 0x7F200001, /**< "OMX.Qualcomm.index.audio.wma10pro" */
+    QOMX_IndexParamAudioSessionId       = 0x7F200002, /**< "OMX.Qualcomm.index.audio.sessionId" */
+    QOMX_IndexParamAudioVoiceRecord     = 0x7F200003, /**< "OMX.Qualcomm.index.audio.VoiceRecord" */
+    QOMX_IndexParamAudioUnused          = 0x7F2FFFFF
+} QOMX_AUDIO_EXTENSIONS_INDEXTYPE;
 
+#if defined( __cplusplus )
+}
+#endif /* end of macro __cplusplus */
 
-typedef struct
-{
-    OMX_U8* inPtr;             //pointer to codec configuration header
-    OMX_U32 inBytes;           //length of codec configuration header
-    OMX_STRING cComponentRole; //OMX component codec type
-    OMX_STRING cComponentName;  //OMX component name
-} OMXConfigParserInputs;
-
-#endif
-
+#endif /* end of macro __H_QOMX_AUDIOINDEXEXTENSIONS_H__ */

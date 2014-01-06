@@ -25,48 +25,34 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------*/
-/*============================================================================
+/*==========================================================================
                             O p e n M A X   w r a p p e r s
                              O p e n  M A X   C o r e
 
- This module contains the definitions of the OpenMAX core.
+*//** @file qc_omx_msg.h
+  This module contains the definitions of the OpenMAX core.
 
 *//*========================================================================*/
 
-#ifndef QC_OMX_CORE_H
-#define QC_OMX_CORE_H
+#ifndef _QC_OMX_MSG_H_
+#define _QC_OMX_MSG_H_
 
-#include "qc_omx_common.h"        // OMX API
-#include <string.h>
-
-#define OMX_COMP_MAX_INST 4
-
-typedef struct _omx_core_cb_type
-{
-  char*                         name;// Component name
-  create_qc_omx_component     fn_ptr;// create instance fn ptr
-  void*                         inst[OMX_COMP_MAX_INST];// Instance handle
-  void*                so_lib_handle;// So Library handle
-  char*                  so_lib_name;// so directory
-  char* roles[OMX_CORE_MAX_CMP_ROLES];// roles played
-}omx_core_cb_type;
-
-typedef struct
-{
-    OMX_U32 width;
-    OMX_U32 height;
-    OMX_U32 profile;
-    OMX_U32 level;
-} VideoOMXConfigParserOutputs;
+#ifdef _ENABLE_QC_MSG_LOG_
+    #ifdef _ANDROID_
+        #include <utils/Log.h>
+        #define DEBUG_PRINT_ERROR ALOGE
+        #define DEBUG_PRINT       ALOGI
+        #define DEBUG_DETAIL      ALOGV
+    #else
+        #define DEBUG_PRINT_ERROR printf
+        #define DEBUG_PRINT       printf
+        #define DEBUG_DETAIL      printf
+    #endif // _ANDROID_
+#else
+    #define DEBUG_PRINT_ERROR
+    #define DEBUG_PRINT
+    #define DEBUG_DETAIL
+#endif // _ENABLE_QC_MSG_LOG_
 
 
-typedef struct
-{
-    OMX_U8* inPtr;             //pointer to codec configuration header
-    OMX_U32 inBytes;           //length of codec configuration header
-    OMX_STRING cComponentRole; //OMX component codec type
-    OMX_STRING cComponentName;  //OMX component name
-} OMXConfigParserInputs;
-
-#endif
-
+#endif // _QC_OMX_MSG_H_

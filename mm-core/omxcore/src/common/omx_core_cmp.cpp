@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------------
-Copyright (c) 2009, The Linux Foundation. All rights reserved.
+Copyright (c) 2009, The The Linux Foundation. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -368,6 +368,7 @@ qc_omx_component_deinit(OMX_IN OMX_HANDLETYPE hComp)
     eRet = pThis->component_deinit(hComp);
     // destroy the component.
     delete pThis;
+    ((OMX_COMPONENTTYPE *)hComp)->pComponentPrivate = NULL;
   }
   return eRet;
 }
