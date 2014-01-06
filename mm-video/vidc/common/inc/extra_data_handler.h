@@ -70,7 +70,7 @@ extern "C"{
 #define VDEC_OMX_SEI 0x7F000007
 #define FRAME_PACK_SIZE 18
 #define H264_EMULATION_BYTE 0x03
-class extra_data_handler 
+class extra_data_handler
 {
 public:
   extra_data_handler();
@@ -99,5 +99,5 @@ private:
   OMX_S32 parse_sliceinfo(OMX_BUFFERHEADERTYPE *pBufHdr,
      OMX_OTHER_EXTRADATATYPE *pExtra);
 };
-  
-#endif  
+
+#endif

@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------------
-Copyright (c) 2010-2011, Code Aurora Forum. All rights reserved.
+Copyright (c) 2012, The Linux Foundation. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -25,24 +25,28 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------*/
-#ifndef _FB_TEST_H
-#define _FB_TEST_H
+#include <dlfcn.h>
+#include "C2DColorConverter.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-int FBTest_Initialize(int nFrameWidth,
-                      int nFrameHeight);
-int FBTest_DisplayImage(int nPmemFd, int nOffset);
-int FBTest_Exit();
-
-int FBTest_RunTest();
-
-#ifdef __cplusplus
-}
-#endif
-
-
-#endif // _FB_TEST_H
+using namespace android;
+class omx_c2d_conv {
+public:
+    omx_c2d_conv();
+    ~omx_c2d_conv();
+    bool init();
+    void destroy();
+    bool open(unsigned int height,unsigned int width,
+              ColorConvertFormat src,
+              ColorConvertFormat dest);
+    bool convert(int src_fd, void *src_base, void *src_viraddr,
+                 int dest_fd, void *dest_base, void *dest_viraddr);
+    bool get_buffer_size(int port,unsigned int &buf_size);
+    int get_src_format();
+    void close();
+private:
+     C2DColorConverterBase *c2dcc;
+    void *mLibHandle;
+    ColorConvertFormat src_format;
+    createC2DColorConverter_t *mConvertOpen;
+    destroyC2DColorConverter_t *mConvertClose;
+};
